@@ -600,19 +600,19 @@ namespace MudBlazor
 
         private bool IsTimeDisabled(int hour, int minute)
         {
-            var currentTime = new TimeSpan(hour, minute, 0);
+            var testedTime = new TimeSpan(hour, minute, 0);
 
-            if (MinTime.HasValue && currentTime < MinTime.Value)
+            if (MinTime.HasValue && testedTime < MinTime.Value)
             {
                 return true;
             }
 
-            if (MaxTime.HasValue && currentTime > MaxTime.Value)
+            if (MaxTime.HasValue && testedTime > MaxTime.Value)
             {
                 return true;
             }
 
-            return IsTimeDisabledFunc(currentTime);
+            return IsTimeDisabledFunc(testedTime);
         }
 
         /// <summary>
@@ -870,7 +870,7 @@ namespace MudBlazor
             }
             else
             {
-                await ChangeHourAsync(GetNextValidHourInterval(change));
+                await ChangeHourAsync(GetNextValidHourInterval(change < 0 ? -1 : 1));
             }
         }
 
@@ -922,7 +922,7 @@ namespace MudBlazor
             }
             else
             {
-                await ChangeMinuteAsync(GetNextValidMinuteInterval(change));
+                await ChangeMinuteAsync(GetNextValidMinuteInterval(change < 0 ? -1 : 1));
             }
         }
 
