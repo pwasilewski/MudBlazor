@@ -609,11 +609,11 @@ namespace MudBlazor.UnitTests.Components
             var instance = comp.Instance;
             await comp.InvokeAsync(() => instance.OpenAsync());
 
-            // Increase hour by one, 12 => 13
+            // Increase hours by one, 12 => 13
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(13));
 
-            // Increase hour by one but because MaxTime.Hour == 13 and MinTime.Hour == 11 so the next available hour is 11
+            // Increase hours by one but because MaxTime.Hour == 13 and MinTime.Hour == 11 so the next available hour is 11
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(11));
 
@@ -645,13 +645,13 @@ namespace MudBlazor.UnitTests.Components
             instance = comp.Instance;
             await comp.InvokeAsync(() => instance.OpenAsync());
 
-            // Increase hour by 5, 12 => 17
+            // Increase hours by 5, 12 => 17
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(17));
-            // Increase hour by 5 but because 17 + 5 is not a valid hour we find the first available hour: 18
+            // Increase hours by 5 but because 17 + 5 is not a valid hour we find the first available hour: 18
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(18));
-            // Increase hour by 5 but because 18 + 5 is not a valid hour we find the first available hour: 6
+            // Increase hours by 5 but because 18 + 5 is not a valid hour we find the first available hour: 6
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowUp", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(6));
 
@@ -674,6 +674,119 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowDown", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(18));
+        }
+
+        [Test]
+        public async Task KeyboardNavigation_GetNextValidMinuteInterval()
+        {
+            int hour = 12;
+
+            var comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.AmPm, false)
+                    .Add(p => p.Time, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MinTime, new TimeSpan(hour, 29, 0))
+                    .Add(p => p.MaxTime, new TimeSpan(hour, 31, 0))
+                    .Add(p => p.OpenTo, OpenTo.Hours));
+
+            var instance = comp.Instance;
+            await comp.InvokeAsync(() => instance.OpenAsync());
+
+            // Increase minutes by one, 12:30 => 12:31
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(31));
+
+            // Increase minutes by one but because MaxTime == 12:31 and MinTime.Hour == 12:29 so the next available time is 12:29
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(29));
+
+            comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.AmPm, false)
+                    .Add(p => p.Time, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MinTime, new TimeSpan(hour, 29, 0))
+                    .Add(p => p.MaxTime, new TimeSpan(hour, 31, 0))
+                    .Add(p => p.OpenTo, OpenTo.Hours));
+
+            instance = comp.Instance;
+            await comp.InvokeAsync(() => instance.OpenAsync());
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(29));
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(31));
+
+            comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.AmPm, false)
+                    .Add(p => p.Time, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MinTime, new TimeSpan(hour, 24, 0))
+                    .Add(p => p.MaxTime, new TimeSpan(hour, 36, 0))
+                    .Add(p => p.OpenTo, OpenTo.Hours));
+
+            instance = comp.Instance;
+            await comp.InvokeAsync(() => instance.OpenAsync());
+
+            // Increase minutes by 5, 12:30 => 12:35
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(35));
+            // Increase minutes by 5 but because 12:40 is not a valid hour we increase by one minute: 12:35 => 12:36
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(36));
+            // Increase minutes by 5 but because 12:41 is not a valid hour we find the first available time: 12:36 => 12:24
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(24));
+
+            comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.AmPm, false)
+                    .Add(p => p.Time, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MinTime, new TimeSpan(hour, 24, 0))
+                    .Add(p => p.MaxTime, new TimeSpan(hour, 36, 0))
+                    .Add(p => p.OpenTo, OpenTo.Hours));
+
+            instance = comp.Instance;
+            await comp.InvokeAsync(() => instance.OpenAsync());
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(25));
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(24));
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(36));
+
+            comp = Context.RenderComponent<MudTimePicker>(parameters
+                => parameters
+                    .Add(p => p.AmPm, false)
+                    .Add(p => p.Time, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MinTime, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.MaxTime, new TimeSpan(hour, 30, 0))
+                    .Add(p => p.OpenTo, OpenTo.Hours));
+
+            instance = comp.Instance;
+            await comp.InvokeAsync(() => instance.OpenAsync());
+
+            //Testing for no infinite loop if no time is available
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(30));
+
+            await comp.InvokeAsync(() => instance.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Hours.Should().Be(12));
+            comp.WaitForAssertion(() => instance.TimeIntermediate.Value.Minutes.Should().Be(30));
         }
     }
 }
