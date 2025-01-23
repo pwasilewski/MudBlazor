@@ -527,6 +527,18 @@ namespace MudBlazor
         [Parameter]
         public bool ShowFilterIcons { get; set; } = true;
 
+        [Parameter]
+        public string SortIcon { get; set; }
+
+        [Parameter]
+        public string FilterIcon { get; set; }
+
+        [Parameter]
+        public string FilterAppliedIcon { get; set; }
+
+        [Parameter]
+        public string ClearFilterIcon { get; set; }
+
         /// <summary>
         /// The way that this grid filters data.
         /// </summary>

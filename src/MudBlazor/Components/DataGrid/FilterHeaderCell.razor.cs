@@ -38,6 +38,18 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// The icon shown when <see cref="MudDataGrid{T}.FilterMode"/> is <c>DataGridFilterMode.ColumnFilterRow</c>.
+        /// </summary>
+        [Parameter]
+        public string FilterAppliedIcon { get; set; }
+
+        /// <summary>
+        /// The icon shown when <see cref="MudDataGrid{T}.FilterMode"/> is <c>DataGridFilterMode.ColumnFilterRow</c>.
+        /// </summary>
+        [Parameter]
+        public string ClearFilterIcon { get; set; }
+
         private string Classname =>
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.HeaderClassname)
@@ -50,6 +62,12 @@ namespace MudBlazor
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)
                 .Build();
+
+        protected override void OnInitialized()
+        {
+            FilterAppliedIcon ??= DataGrid?.FilterAppliedIcon ?? Icons.Material.Filled.FilterAlt;
+            ClearFilterIcon ??= DataGrid?.ClearFilterIcon ?? Icons.Material.Filled.FilterAltOff;
+        }
 
         #region Computed Properties and Functions
 

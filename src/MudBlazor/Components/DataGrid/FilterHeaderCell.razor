@@ -53,7 +53,7 @@
                         </MudItem>
                     </MudGrid>
                 }
-                <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                <MudMenu Icon="@FilterAppliedIcon" Size="@Size.Small" Dense="true">
                     @foreach (var o in operators)
                     {
                         if (!string.IsNullOrWhiteSpace(o))
@@ -62,7 +62,7 @@
                         }
                     }
                 </MudMenu>
-                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
+                <MudIconButton Class="align-self-center" Icon="@ClearFilterIcon" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
             </MudStack>
         }
     </th>

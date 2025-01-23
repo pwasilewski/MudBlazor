@@ -265,7 +265,19 @@ namespace MudBlazor
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        public string SortIcon { get; set; }
+
+        /// <summary>
+        /// The icon shown when <see cref="MudDataGrid{T}.FilterMode"/> is <c>DataGridFilterMode.Simple</c> or <c>DataGridFilterMode.ColumnFilterMenu</c>.
+        /// </summary>
+        [Parameter]
+        public string FilterIcon { get; set; }
+
+        /// <summary>
+        /// The icon shown when <see cref="MudDataGrid{T}.FilterMode"/> is <c>DataGridFilterMode.Simple</c> or <c>DataGridFilterMode.ColumnFilterMenu</c>.
+        /// </summary>
+        [Parameter]
+        public string FilterAppliedIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -562,6 +574,10 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            SortIcon ??= DataGrid?.SortIcon ?? Icons.Material.Filled.ArrowUpward;
+            FilterIcon ??= DataGrid?.FilterIcon ?? Icons.Material.Outlined.FilterAlt;
+            FilterAppliedIcon ??= DataGrid?.FilterAppliedIcon ?? Icons.Material.Filled.FilterAlt;
+
             if (FilterOperators.Count > 0)
             {
                 var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
