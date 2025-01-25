@@ -20,12 +20,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FilterHeaderCellDefaultIconsTest()
         {
-            var filterAppliedIcon = Icons.Material.Filled.PlaylistAddCheck;
-            var clearFilterIcon = Icons.Material.Filled.PlaylistRemove; ;
+            var filterAppliedIcon = Icons.Material.Filled.FilterAlt;
+            var clearFilterIcon = Icons.Material.Filled.FilterAltOff;
 
             var comp = Context.RenderComponent<FilterHeaderCell<object>>();
             comp.Instance.FilterAppliedIcon.Should().Be(filterAppliedIcon);
-            comp.Instance.FilterAppliedIcon.Should().Be(clearFilterIcon);
+            comp.Instance.ClearFilterIcon.Should().Be(clearFilterIcon);
         }
     }
 }
