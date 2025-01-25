@@ -3503,6 +3503,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridDefaultIconsTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomFilteringTest.Model>>();
+            var columns = comp.FindComponents<Column<DataGridCustomFilteringTest.Model>>();
+            var column = columns.First();
+            column.Instance.SortIcon.Should().Be(Icons.Material.Filled.ArrowUpward);
+            column.Instance.FilterIcon.Should().Be(Icons.Material.Outlined.FilterAlt);
+            column.Instance.FilterAppliedIcon.Should().Be(Icons.Material.Filled.FilterAlt);
+
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.FilterMode), DataGridFilterMode.ColumnFilterRow));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            var filterHeaderCell = dataGrid.FindComponent<FilterHeaderCell<DataGridCustomFilteringTest.Model>>();
+            filterHeaderCell.Instance.FilterAppliedIcon.Should().Be(Icons.Material.Filled.FilterAlt);
+            filterHeaderCell.Instance.ClearFilterIcon.Should().Be(Icons.Material.Filled.FilterAltOff);
+        }
+
+        [Test]
+        public void DataGridIconsFromDataGridTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterIconsFromDataGrid>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsFromDataGrid.Item>>();
+            var column = comp.FindComponent<Column<DataGridFilterIconsFromDataGrid.Item>>();
+            column.Instance.SortIcon.Should().Be(Icons.Material.Filled.Navigation);
+            column.Instance.FilterIcon.Should().Be(Icons.Material.Filled.PlaylistAdd);
+            column.Instance.FilterAppliedIcon.Should().Be(Icons.Material.Filled.PlaylistAddCheck);
+
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.FilterMode), DataGridFilterMode.ColumnFilterRow));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+            var filterHeaderCell = dataGrid.FindComponent<FilterHeaderCell<DataGridFilterIconsFromDataGrid.Item>>();
+            filterHeaderCell.Instance.FilterAppliedIcon.Should().Be(Icons.Material.Filled.PlaylistAddCheck);
+            filterHeaderCell.Instance.ClearFilterIcon.Should().Be(Icons.Material.Filled.PlaylistRemove);
+        }
+
+        [Test]
+        public void DataGridIconsFromColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterIconsFromColumn>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsFromColumn.Item>>();
+            var column = comp.FindComponent<Column<DataGridFilterIconsFromColumn.Item>>();
+            column.Instance.SortIcon.Should().Be(Icons.Material.Filled.Navigation);
+            column.Instance.FilterIcon.Should().Be(Icons.Material.Filled.PlaylistAdd);
+            column.Instance.FilterAppliedIcon.Should().Be(Icons.Material.Filled.PlaylistAddCheck);
+        }
+
+        [Test]
         public async Task DataGridServerDataColumnFilterMenuTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
