@@ -1871,17 +1871,23 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [Test]
-        public void GetMonthStart_Should_NormalizeToFirstDayOfMonth()
+        [TestCase(2026, 2, 1)]
+        [TestCase(2026, 2, 15)]
+        [TestCase(2026, 2, 28)]
+        [TestCase(2026, 1, 31)]
+        [TestCase(2026, 4, 30)]
+        public void PickerMonth_Should_DisplayCorrectNumberOfDaysInMonth(int year, int month, int day)
         {
+            var testDateTime = new DateTime(year, month, day);
+
             var comp = OpenPicker(parameters => parameters
-                .Add(x => x.PickerMonth, new DateTime(2026, 2, 15)));
+                .Add(x => x.PickerMonth, testDateTime));
 
-            var button = comp
-                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
-                .Single(x => x.GetAttribute("style") == "--day-id: 1;");
+            var visibleDays = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day:not(.mud-hidden)")
+                .Count;
 
-            button.TextContent.Should().Be("1");
+            visibleDays.Should().Be(DateTime.DaysInMonth(testDateTime.Year, testDateTime.Month));
         }
     }
 }
